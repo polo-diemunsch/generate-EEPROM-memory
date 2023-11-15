@@ -1,4 +1,31 @@
 symbols = {
+    "A": ["3F", "48", "48", "48", "3F"],
+    "B": ["7F", "49", "49", "49", "36"],
+    "C": ["3E", "41", "41", "41", "22"],
+    "D": ["7F", "41", "41", "41", "3E"],
+    "E": ["7F", "49", "49", "49", "41"],
+    "F": ["7F", "48", "48", "48", "40"],
+    "G": ["3E", "41", "49", "49", "2E"],
+    "H": ["7F", "08", "08", "08", "7F"],
+    "I": ["41", "41", "7F", "41", "41"],
+    "J": ["46", "41", "41", "7F", "40"],
+    "K": ["7F", "08", "08", "14", "63"],
+    "L": ["7F", "01", "01", "01", "01"],
+    "M": ["7F", "20", "18", "20", "7F"],
+    "N": ["7F", "20", "10", "08", "7F"],
+    "O": ["3E", "41", "41", "41", "3E"],
+    "P": ["7F", "48", "48", "48", "30"],
+    "Q": ["3E", "41", "45", "43", "3F"],
+    "R": ["7F", "48", "48", "48", "37"],
+    "S": ["31", "49", "49", "49", "46"],
+    "T": ["40", "40", "7F", "40", "40"],
+    "U": ["7E", "01", "01", "01", "7E"],
+    "V": ["7E", "02", "01", "02", "7E"],
+    "W": ["7F", "02", "0C", "02", "7F"],
+    "X": ["63", "14", "08", "14", "63"],
+    "Y": ["70", "08", "07", "08", "70"],
+    "Z": ["43", "45", "49", "51", "61"],
+
     "0": ["3e", "45", "49", "51", "3e"],
     "1": ["41", "7f", "01"],
     "2": ["27", "49", "49", "49", "31"],
@@ -9,6 +36,8 @@ symbols = {
     "7": ["40", "47", "48", "48", "70"],
     "8": ["36", "49", "49", "49", "36"],
     "9": ["32", "49", "49", "49", "3e"],
+
+    " ": ["00", "00", "00"],
     ".": ["01"],
     "!": ["7D"],
     "-": ["08", "08", "08"],
@@ -41,32 +70,30 @@ symbols = {
     "€":["3e", "55", "55", "41", "22"],
     "@":["3e", "4d", "53", "52", "3e"],
     "&":["36", "49", "49", "3e", "09"],
-    "%":["33", "54", "7b", "15", "67"]
+    "%":["33", "54", "7b", "15", "67"],
+
+    "NaC": ["7F", "7F", "7F", "7F", "7F"]
 }
 
-default = "?"
+# message = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+message = input("Enter your text\n> ")
+filepath = "memory.hex"
 
+message = message.upper()
 
-text = input("Rentrez le texte : ")
-seq = []
-text = text.upper()
-for symbol in text:
-    if symbol in symbols.keys():
-        seq.append(symbols[symbol])
-    else:
-        print("Le symbole " + symbol + " n'est pas reconnu")
-        seq.append(symbols[default])
+string = "v2.0 raw\n"
+for letter in message:
+    if letter not in symbols:
+        letter = "NaC"
+    
+    for code in symbols[letter]:
+        string += "0x" + code + "\n"
 
-with open("memory.hex", "w", encoding="utf-8") as f:
-    f.write("v2.0 raw\n")
-    for i in range(len(seq)):
-        for j in range(len(seq[i])):
-            f.write("0x" + seq[i][j])
-            f.write("\n")
-            if j == len(seq[i])-1:
-                f.write("0x00\n")
-        if i != len(seq)-1:
-            f.write("\n")
-    print("Fichier crée (memory.hex)")
+    # Small space between caracters
+    string += "0x00" + "\n"
+
+with open(filepath, "w") as file:
+    file.write(string)
+    print(f"File created / modified ({filepath})")
 
     
