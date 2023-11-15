@@ -16,7 +16,7 @@ The script uses a set of symbols to represent each character. These symbols are 
 ## Example
 
 ```python
-python text_to_hex_converter.py
+python main.py
 ```
 ```
 Enter your text:
