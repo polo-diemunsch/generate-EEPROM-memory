@@ -70,13 +70,10 @@ symbols = {
     "€":["3e", "55", "55", "41", "22"],
     "@":["3e", "4d", "53", "52", "3e"],
     "&":["36", "49", "49", "3e", "09"],
-    "%":["33", "54", "7b", "15", "67"],
-
-    "NaC": ["7F", "7F", "7F", "7F", "7F"]
+    "%":["33", "54", "7b", "15", "67"]
 }
 
-# message = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-message = input("Enter your text\n> ")
+message = input("Enter your text :\n> ")
 filepath = "memory.hex"
 
 message = message.upper()
@@ -84,7 +81,7 @@ message = message.upper()
 string = "v2.0 raw\n"
 for letter in message:
     if letter not in symbols:
-        letter = "NaC"
+        letter = "#"
     
     for code in symbols[letter]:
         string += "0x" + code + "\n"
