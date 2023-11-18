@@ -6,6 +6,8 @@ We have a [Digital](https://github.com/hneemann/Digital) project reading in an E
 
 This python script converts user-input text into a hexadecimal representation to store in the EEPROM.
 
+You can try it directly on this URL : https://eeprom-generator.static.domains/
+
 ## Usage
 
 1. Run the script.
