@@ -73,22 +73,78 @@ symbols = {
     "%":["73", "54", "6B", "15", "67"]
 }
 
-message = input("Enter your text :\n> ")
+NB_BITS = 8
+MEMORY_SIZE = 2**NB_BITS
+MAX_JUMP_SIZE = 2**(NB_BITS - 3)
+NB_NOPS = 2
+
+message = input("Enter your text:\n> ")
+modes = ["once", "cycle", "repeat"]
+mode = ""
+while mode not in modes:
+    mode = input(f"Choose your mode ({', '.join(modes)}):\n> ")
+
 filepath = "memory.hex"
 
 message = message.upper()
 
-string = "v2.0 raw\n"
+cells = ["0x00" for _ in range(MEMORY_SIZE)]
+i_actual_cell = 0
+too_big = False
 for letter in message:
     if letter not in symbols:
         letter = "#"
+
+    if i_actual_cell + len(symbols[letter]) * (NB_NOPS + 1) + NB_NOPS + 2 >= MEMORY_SIZE:
+        too_big = True
+        break
     
     for code in symbols[letter]:
-        string += "0x" + code + "\n"
+        cells[i_actual_cell] = "0x" + code
+        i_actual_cell += 1
+    
+        for _ in range(NB_NOPS):
+            cells[i_actual_cell] = hex(2**(NB_BITS-1) + 1)  # Nop (Jump +1)
+            i_actual_cell += 1
 
     # Small space between caracters
-    string += "0x00" + "\n"
+    # cells[i_actual_cell] = "0x00"
+    i_actual_cell += 1
+    
+    for _ in range(NB_NOPS):
+        cells[i_actual_cell] = hex(2**(NB_BITS-1) + 1)  # Nop (Jump +1)
+        i_actual_cell += 1
 
-with open(filepath, "w") as file:
-    file.write(string)
-    print(f"File created/modified ({filepath})")
+if mode == "once" and not too_big:
+    if i_actual_cell + 1 < MEMORY_SIZE:
+        cells[i_actual_cell] = hex(2**(NB_BITS-1))  # Jump 0
+        i_actual_cell += 1
+    else:
+        too_big = True
+
+if mode == "repeat" and not too_big:
+    if i_actual_cell + 1 < MEMORY_SIZE:
+        cells[i_actual_cell] = hex(2**(NB_BITS) - 1)  # Clear
+        i_actual_cell += 1
+    else:
+        too_big = True
+
+if mode == "cycle" or mode == "repeat" and not too_big:
+    while i_actual_cell != MEMORY_SIZE:
+        if i_actual_cell + MAX_JUMP_SIZE - 1 < MEMORY_SIZE:
+            cells[i_actual_cell] = hex(2**(NB_BITS-1) + MAX_JUMP_SIZE - 1)  # Jump +(MAX_JUMP_SIZE - 1)
+            i_actual_cell += MAX_JUMP_SIZE - 1
+        else:
+            jump_size = MEMORY_SIZE - i_actual_cell
+            cells[i_actual_cell] = hex(2**(NB_BITS-1) + jump_size)  # Jump +jump_size
+            i_actual_cell += jump_size
+
+if not too_big:
+    string = "v2.0 raw\n" + "\n".join(cells)
+
+    with open(filepath, "w") as file:
+        file.write(string)
+        print(f"File created/modified ({filepath})")
+
+else:
+    print("⚠️ Text too big for the memory size")
