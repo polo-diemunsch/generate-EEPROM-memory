@@ -73,7 +73,7 @@ symbols = {
     "%":["73", "54", "6B", "15", "67"]
 }
 
-message = input("Enter your text :\n> ")
+message = input("Enter your text:\n> ")
 filepath = "memory.hex"
 
 message = message.upper()

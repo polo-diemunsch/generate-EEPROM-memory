@@ -27,5 +27,6 @@ python main.py
 ```
 Enter your text:
 > Hello World!
+File created/modified (memory.hex)
 ```
 The script will generate the corresponding hexadecimal values for each character and save them to "memory.hex".
